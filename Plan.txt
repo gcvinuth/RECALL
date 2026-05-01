@@ -1,0 +1,94 @@
+Project: Recall — The Social Memory & Intent Layer
+
+1. Vision
+
+Recall is a "Personal OS for Relationships." It allows users to offload the cognitive burden of remembering details about people and scheduling follow-ups. It is voice-first, minimalist, and focuses on "Bridges" (deep links) rather than manual entry.
+
+2. Core Functional Requirements
+
+A. The "Vibe" Input (Voice-to-Intent)
+
+Feature: A single, prominent "Record" button.
+
+Action: Captures audio, transcribes it via Whisper, and passes text to an LLM.
+
+Logic: The LLM must parse the transcript into a structured JSON object:
+
+contactName: String
+
+contextualNotes: String (e.g., "Moving to Chicago")
+
+taskIntent: Boolean (Is there a message to send?)
+
+messageContent: String (The draft)
+
+scheduledTime: ISO String (e.g., "Tomorrow at 8pm")
+
+preferredPlatform: Enum (WhatsApp, iMessage, Telegram, Slack, Email)
+
+B. The "Deep Link Bridge"
+
+Feature: Cross-app execution without a backend.
+
+Strategy: Use URL Schemes to open external apps with pre-filled content.
+
+Schemes:
+
+WhatsApp: https://wa.me/{phone}?text={encodedMessage}
+
+iMessage: sms:{phone}&body={encodedMessage}
+
+Email: mailto:{email}?body={encodedMessage}
+
+Telegram: https://t.me/{username}
+
+C. The Intent Scheduler
+
+Feature: Local notifications for "Intent Execution."
+
+Action: At the scheduledTime, trigger a high-priority push notification.
+
+Payload: The notification should say: "Send message to [Name]?"
+
+On Click: Open the Recall App to a "Bridge Card" which, when tapped, fires the Deep Link.
+
+3. Technical Stack (Optimized for Vibecoding)
+
+Frontend: React (Vite) or Next.js (Tailwind CSS for styling).
+
+Icons: Lucide-React.
+
+AI Integration: OpenAI API (Whisper-1 for audio, GPT-4o for parsing).
+
+State Management: LocalStorage (for the "Personal CRM" data) to avoid complex databases initially.
+
+Notifications: Browser Push API (for PWA) or Expo Notifications (for Native).
+
+4. Initial Prompt for Agent
+
+"Build a minimalist React web app called 'Recall'.
+
+Create a large, central pulse-animation button for recording audio.
+
+Use the OpenAI Whisper API to transcribe audio.
+
+Send the transcript to GPT-4o to extract: Contact Name, Key Facts, and Task Intent.
+
+If a Task Intent is found (e.g., 'Remind me to text Sarah tomorrow at 8pm'), save it to a 'Pending Actions' list in LocalStorage.
+
+Create a dashboard showing 'Recent Connections' (cards with names and facts) and 'Upcoming Intents' (scheduled messages).
+
+Implement a 'Send' button on Intent cards that uses 'window.open' with WhatsApp/SMS URL schemes to pre-fill messages."
+
+5. UI/UX Guidelines
+
+Theme: Dark Mode by default. High-end, glassmorphism design.
+
+Feedback: Haptic feedback (if mobile) on button hold.
+
+Colors: Deep Charcoal (#121212), Electric Blue (#007AFF) for actions, Subtle Slate for notes.
+
+6. Success Metric
+
+The "Time-to-Value" should be under 10 seconds:
+(User walks away from chat) -> (Holds button) -> (Speaks) -> (App parses) -> (Notification scheduled) -> Done.
