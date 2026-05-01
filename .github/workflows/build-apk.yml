@@ -27,14 +27,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build Web Assets (Creates www folder)
+    - name: Build Web Assets
       run: npm run build
 
-    - name: Initialize Capacitor Android
+    - name: Fresh Capacitor Android Initialize
       run: |
-        if [ ! -d "android" ]; then
-          npx cap add android
-        fi
+        rm -rf android
+        npx cap add android
         npx cap sync android
 
     - name: Build Debug APK
